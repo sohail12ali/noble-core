@@ -16,5 +16,8 @@ big=$(find .claude/skills -name SKILL.md -size +"${CORE_SKILL_MAX_BYTES}"c 2>/de
 [ -z "$big" ] && ok "skills under $CORE_SKILL_MAX_BYTES bytes" || { warn "skills over cap (move examples to a sub-file):"; echo "$big"; }
 [ -f "$CORE_LEDGER" ] && ok "ledger present" || warn "no ledger yet (scripts/core/ledger.sh creates it)"
 free=$(df -Pk . | awk 'NR==2{printf "%d", $4/1048576}'); [ "$free" -ge "$CORE_MIN_FREE_GB" ] && ok "free disk ${free} GB" || bad "free disk ${free} GB < $CORE_MIN_FREE_GB GB: clean build output first"
-[ -f stack/profile.env ] && ok "stack profile present" || warn "no stack profile: generic mode (layer 0)"
+if [ -f stack/profile.env ]; then
+  ok "stack profile present"
+  if [ -f scripts/core/apply_stack.py ]; then python3 scripts/core/apply_stack.py --check >/dev/null 2>&1 && ok "rendered skills up to date" || bad "rendered skills stale: python3 scripts/core/apply_stack.py"; fi
+else warn "no stack profile: generic mode (copy stack/profile.example.env or a preset)"; fi
 exit $fail
