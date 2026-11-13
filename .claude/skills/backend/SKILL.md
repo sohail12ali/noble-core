@@ -5,7 +5,6 @@ description: Write and review server-side code - APIs, domain logic, background 
 
 # backend
 
-Stack: not defined (layer 0). Layer 1 adds `scripts/core/apply_stack.py`, which re-renders this file from a stack profile.
 
 ## Principles
 
@@ -23,6 +22,8 @@ Stack: not defined (layer 0). Layer 1 adds `scripts/core/apply_stack.py`, which 
 
 Happy path, wrong role, other tenant's data returns not-found, validation failure; financial or audit-relevant endpoints also assert the audit record.
 
-## Commands
+<!-- stack:begin -->
+## Stack
 
-Defined by the stack profile: `BUILD_CMD`, `TEST_CMD`, `LINT_CMD`, `RUN_CMD` (see `stack/profile.env`).
+Not defined (layer 0). Layer 1 adds `scripts/core/apply_stack.py`, which fills this section from `stack/profile.env`: the stack's conventions, pitfalls and exact commands.
+<!-- stack:end -->

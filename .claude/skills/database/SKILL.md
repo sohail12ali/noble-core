@@ -5,7 +5,6 @@ description: Write and review versioned schema scripts, seed data, grants, isola
 
 # database
 
-Engine: not defined (layer 0). Layer 1 adds `scripts/core/apply_stack.py`, which re-renders this file from a stack profile.
 
 ## Principles
 
@@ -30,6 +29,8 @@ Engine: not defined (layer 0). Layer 1 adds `scripts/core/apply_stack.py`, which
 4. Apply to the dev database, run the isolation and grant tests.
 5. Align the data-access model; the model-versus-schema test must pass.
 
-## Commands
+<!-- stack:begin -->
+## Stack
 
-Defined by the stack profile: `DB_MIGRATE_CMD`, `DB_RESET_CMD`, `DB_SEED_CMD`, `DB_STATUS_CMD`; wrapper `scripts/core/db.sh` (layer 1+).
+Not defined (layer 0). Layer 1 adds `scripts/core/apply_stack.py`, which fills this section from `stack/profile.env`: the stack's conventions, pitfalls and exact commands.
+<!-- stack:end -->

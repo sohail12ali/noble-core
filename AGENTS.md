@@ -46,6 +46,8 @@ The orchestrator plans, routes, gates, merges, cleans and records; it does not b
 - A skill file over 6 KB moves examples to a sub-file. Never read generated files or archives unless the task needs them.
 - Communicate short and plain, answer first; say what was not run.
 
+<!-- stack:begin -->
 ## Stack
 
-Layer 0 has no stack. When `stack/profile.env` exists, commands and conventions come from it and from the rendered skills (`backend`, `frontend`, `database`, `testing`). Check with `scripts/core/doctor.sh`.
+Layer 0 has no stack. When `stack/profile.env` exists (layer 1+), commands and conventions come from it and from the rendered skills (`backend`, `frontend`, `database`, `testing`). Check with `scripts/core/doctor.sh`.
+<!-- stack:end -->

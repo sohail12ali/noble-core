@@ -5,7 +5,6 @@ description: How to write, run and review tests across layers - unit, integratio
 
 # testing
 
-Commands come from the stack profile (`TEST_CMD`, `TEST_CHANGED_CMD`, `TEST_ALL_CMD`) once layer 1+ is applied.
 
 ## Layers
 
@@ -39,3 +38,9 @@ Heavy suites run one at a time, with a lock around shared resources. Timeouts hi
 ## Slice close needs
 
 Finish-line command passing, the suites for what changed, the invariant review against the diff, evidence pasted into the brief, and a plain statement of what was not run.
+
+<!-- stack:begin -->
+## Stack
+
+Not defined (layer 0). Layer 1 adds `scripts/core/apply_stack.py`, which fills this section from `stack/profile.env`: the stack's conventions, pitfalls and exact commands.
+<!-- stack:end -->

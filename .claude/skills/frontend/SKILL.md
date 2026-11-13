@@ -5,7 +5,6 @@ description: Write and review client code - web, mobile or desktop UI, state, AP
 
 # frontend
 
-Stack: not defined (layer 0). Layer 1 adds `scripts/core/apply_stack.py`, which re-renders this file from a stack profile.
 
 ## Principles
 
@@ -19,6 +18,8 @@ Stack: not defined (layer 0). Layer 1 adds `scripts/core/apply_stack.py`, which 
 - **Design tokens** (colour, type, spacing) in one place; themes swap tokens, not components.
 - Dev-only sign-in or tooling is behind a build flag that is off in release builds.
 
-## Commands
+<!-- stack:begin -->
+## Stack
 
-Defined by the stack profile: `BUILD_CMD`, `TEST_CMD`, `LINT_CMD`, `RUN_CMD` (see `stack/profile.env`).
+Not defined (layer 0). Layer 1 adds `scripts/core/apply_stack.py`, which fills this section from `stack/profile.env`: the stack's conventions, pitfalls and exact commands.
+<!-- stack:end -->
