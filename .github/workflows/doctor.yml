@@ -1,0 +1,9 @@
+name: doctor
+# Manual only: hosted minutes may be limited. Runs the repo hygiene check.
+on: workflow_dispatch
+jobs:
+  doctor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh scripts/core/doctor.sh
