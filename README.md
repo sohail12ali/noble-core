@@ -1,61 +1,63 @@
 # noble-core
 
-A generic, stack-free **operating system for long-running AI engineering work**: how agents plan, build, test, review, merge, clean up and remember, so a run can go for days with nobody watching and still be traceable afterwards.
+Give an AI agent one plan, go to sleep, and wake up to a branch, a measured report and a short list of questions.
 
-It distils what worked (and what broke) in two real projects: a multi-tenant gym platform built almost entirely by an orchestrator driving Claude and Cursor workers, and a cross-platform desktop app built and released across three operating systems.
+This is a small starting kit for long, unattended engineering runs with Claude Code (Cursor reads the same `CLAUDE.md`). It deliberately does not tell the agent *how* to work. Current models plan and build well on their own. It supplies the few things they cannot supply for themselves.
 
-> Works with Claude Code and Cursor (and any agent that reads `AGENTS.md`). Nothing here depends on a language or framework until you pick a layer that says so.
-
-## The idea in one picture
-
-```text
- goal ──► plan ──► slices ──► workers (one worktree each) ──► gate ──► review ──► merge ──► cleanup
-            ▲                                                                              │
-            └──────────── ledger · STATUS · ADRs · briefs  (the repo is the memory) ◄──────┘
-```
-
-- **The repo is the memory.** A cold start reads `docs/STATUS.md` and the top of `.autonomous/ledger.md` and knows what to do next.
-- **An orchestrator plans, routes, gates, merges, cleans and records.** Workers build one slice each, in isolated worktrees.
-- **Evidence over claims.** Workers' reports are claims; the orchestrator reads the diff and runs the gate.
-- **Decisions are marked.** ADRs with rejected alternatives; decisions made while you were away stay `Proposed`.
-
-## Layers (branches)
-
-Start generic, specialise step by step. Each layer is a branch cut from the one before.
-
-| Branch | Adds | Use when |
-|---|---|---|
-| `main`, `layer/0-foundation` | process only: rules, orchestration, long-run, checkpoint, slices, ADRs, plans, monitoring, handoff, delivery, scripts, hooks | you have not chosen a stack, or want to pick your own |
-| `layer/1-stack-aware` | a stack profile (`stack/profile.env`) and `apply_stack.py` that renders the backend / frontend / database / testing skills for your stack, plus db and gate wrappers | you know your stack and want skills and commands to match |
-| `layer/2-stack-presets` | ready presets and fragments (.NET + Flutter + PostgreSQL, Node/TypeScript + React + PostgreSQL, Python/FastAPI + React + PostgreSQL) | your stack is one of them, or you want a worked example to copy |
-
-Your own project adds a final layer: invariants (`docs/INVARIANTS.md`), domain skills, real plan. Details and the upward-merge procedure: [docs/LAYERS.md](docs/LAYERS.md).
-
-## What is in layer 0
-
-| Area | Where |
+| The agent cannot know or do this alone | So the kit provides |
 |---|---|
-| Rules for every agent | [AGENTS.md](AGENTS.md) (`CLAUDE.md` and `.cursor/rules/core.mdc` point to it) |
-| Workers | `.claude/agents/`: `scout` (cheap lookups), `builder`, `reviewer`, `planner` |
-| Skills | `.claude/skills/`: `orchestrate`, `long-run`, `checkpoint`, `slice`, `plan`, `monitor`, `record-decision`, `handoff`, `delivery`, `backend`, `frontend`, `database`, `testing`, `claude-cli`, `cursor-cli` |
-| State templates | `docs/templates/`: STATUS, PROGRESS, brief, ADR, ledger, open questions, development / architecture / delivery plans, invariants |
-| Scripts | `scripts/core/`: `doctor`, `progress`, `worktree-new`, `worktree-done`, `ledger`, `snapshot`, `queue-runner`; `scripts/hooks/` branch guard |
-| Config | `.core/config.env` (branches, caps, merge mode, paths) |
+| What you want, what must never break, what it may do without you | [`PLAN.md`](PLAN.md): one file you own |
+| Remember anything after its context resets | `run/STATE.md`, `run/JOURNAL.md`: the repo is the memory |
+| Ask you a question at 3 a.m. | `run/INBOX.md`: it takes its recommended default, writes it down, keeps going |
+| Keep itself running all night | [`run/loop.sh`](run/loop.sh): fresh session after fresh session until done, blocked or a limit |
+| Be trusted on "it works" | `scripts/verify.sh`: the loop runs the gate itself and writes `run/REPORT.md` from measurements |
+| Stay inside the lines | `scripts/guard.sh` hook and a deny list: no protected branches, no force-push, no merging, no editing the plan or the gate |
 
-## Quick start
+## Use it
 
 ```bash
-# use this repo as a template for a new project (or copy these files into an existing one)
-sh scripts/core/doctor.sh                     # check the machine and the repo
-cp docs/templates/STATUS.md docs/STATUS.md    # then fill it in
-cp docs/templates/INVARIANTS.md docs/INVARIANTS.md
+# 1. Copy this repo's files into your project (or start a project from it).
+# 2. Ask the agent: "use the plan skill". It interviews you once and writes PLAN.md and the gate.
+# 3. Start the run and leave:
+nohup bash run/loop.sh > /dev/null 2>&1 &
+# 4. Any time:
+sh scripts/status.sh        # where it is
+touch run/STOP              # stop after the current session
+# 5. In the morning: read run/REPORT.md, answer run/INBOX.md, review the branch, merge it yourself.
 ```
 
-Then ask your agent: *"Use the `plan` skill to write the development plan for `<goal>`"*, and later *"Use `orchestrate` and `long-run` to work through the plan unattended."* Full walkthrough: [docs/ADOPTING.md](docs/ADOPTING.md). How the pieces fit: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Hard-won lessons: [docs/LESSONS.md](docs/LESSONS.md).
+Limits (sessions, hours, budget per session, stall detection) and the engine are in [`core.env`](core.env).
 
-## Safety defaults
+## How a run behaves
 
-Protected branches change only through PRs (a hook enforces it). No secrets in files or command lines. Agents touch only local data. Unattended runs never push to protected branches, force-push, delete unmerged work or enable behaviour-changing switches. Edit `AGENTS.md` and `.core/config.env` to fit your risk appetite, not to remove the guard rails.
+```text
+PLAN.md ──► loop ──► fresh session ──► work, commit, update STATE / JOURNAL / INBOX ──┐
+              ▲                                                                       │
+              └── loop measures: new commits? gate green? status? ◄───────────────────┘
+                  stops on: done + gate not red · blocked · stuck · time · sessions · run/STOP
+```
+
+- Every session starts cold and reads the files, so losing context costs nothing.
+- Work left uncommitted at the end of a session is committed by the loop, so nothing is lost.
+- "Done" with a red gate is not accepted; the loop continues.
+- No new commits several sessions in a row means stuck: the loop stops instead of burning money.
+- The agent never merges. It delivers a run branch (optionally pushed, optionally a draft pull request).
+
+## What is in the box
+
+`CLAUDE.md` (the rules, one file) · `PLAN.md` · `core.env` · `run/` (loop, prompt, state, journal, inbox, unattended permissions) · `scripts/` (verify, guard, lock, status) · two skills (`plan`, `run`) · three agents, one per level (`scout` Haiku, `worker` Sonnet, `reviewer` Fable; the lead session runs on Opus) · `docs/DECISIONS.md` · `docs/LESSONS.md` (earned in real overnight runs).
+
+## Models and parallel work
+
+`CLAUDE.md` assigns work by level: look-ups to Haiku, building to a check to Sonnet, building with judgement to Opus, deciding and reviewing to Fable. The lead session fans independent tasks out to workers, each in its own git worktree (at most `MAX_PARALLEL`), and integrates their branches one at a time through the gate. `scripts/lock.sh` gives every worktree one shared lock for things they would collide on, such as a test database; the gate itself takes it. The report lists any worktree left in flight.
+
+## Safety, plainly
+
+An unattended agent needs broad command access because nobody is there to approve prompts. The hook and deny list hold the hard limits, but they are a seat belt, not a cage. Run it on a machine or container where the worst case is acceptable, with test keys only, and review the branch before merging.
+
+## The earlier, heavier version
+
+Branches `layer/0-foundation`, `layer/1-stack-aware` and `layer/2-stack-presets` hold the first design: a full prescribed method with fifteen skills and stack presets. Why it was replaced: [docs/DECISIONS.md](docs/DECISIONS.md).
 
 ## License
 
