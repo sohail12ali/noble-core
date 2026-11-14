@@ -4,4 +4,5 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 . ./core.env
 [ -n "${VERIFY_CMD:-}" ] || { echo "verify: NO GATE DEFINED (set VERIFY_CMD in core.env). Unverified is not a pass."; exit 3; }
 echo "+ $VERIFY_CMD"
-if sh -c "$VERIFY_CMD"; then echo "verify: GREEN"; else echo "verify: RED"; exit 1; fi
+# One gate at a time across all worktrees: parallel gates collide on databases and ports.
+if sh scripts/lock.sh gate sh -c "$VERIFY_CMD"; then echo "verify: GREEN"; else echo "verify: RED"; exit 1; fi

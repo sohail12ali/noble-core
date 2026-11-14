@@ -2,7 +2,7 @@
 
 Give an AI agent one plan, go to sleep, and wake up to a branch, a measured report and a short list of questions.
 
-This is a small starting kit for long, unattended engineering runs with Claude Code or Cursor. It deliberately does not tell the agent *how* to work. Current models plan and build well on their own. It supplies the few things they cannot supply for themselves.
+This is a small starting kit for long, unattended engineering runs with Claude Code (Cursor reads the same `CLAUDE.md`). It deliberately does not tell the agent *how* to work. Current models plan and build well on their own. It supplies the few things they cannot supply for themselves.
 
 | The agent cannot know or do this alone | So the kit provides |
 |---|---|
@@ -17,7 +17,7 @@ This is a small starting kit for long, unattended engineering runs with Claude C
 
 ```bash
 # 1. Copy this repo's files into your project (or start a project from it).
-# 2. In Claude Code or Cursor: "use the plan skill". It interviews you once and writes PLAN.md and the gate.
+# 2. Ask the agent: "use the plan skill". It interviews you once and writes PLAN.md and the gate.
 # 3. Start the run and leave:
 nohup bash run/loop.sh > /dev/null 2>&1 &
 # 4. Any time:
@@ -45,7 +45,11 @@ PLAN.md ──► loop ──► fresh session ──► work, commit, update ST
 
 ## What is in the box
 
-`AGENTS.md` (rules, about 50 lines) · `PLAN.md` · `core.env` · `run/` (loop, prompt, state, journal, inbox, unattended permissions) · `scripts/` (verify, guard, status) · two skills (`plan`, `run`) · one agent (`reviewer`, fresh-context review of risky changes) · `docs/DECISIONS.md` · `docs/LESSONS.md` (earned in real overnight runs).
+`CLAUDE.md` (the rules, one file) · `PLAN.md` · `core.env` · `run/` (loop, prompt, state, journal, inbox, unattended permissions) · `scripts/` (verify, guard, lock, status) · two skills (`plan`, `run`) · three agents, one per level (`scout` Haiku, `worker` Sonnet, `reviewer` Fable; the lead session runs on Opus) · `docs/DECISIONS.md` · `docs/LESSONS.md` (earned in real overnight runs).
+
+## Models and parallel work
+
+`CLAUDE.md` assigns work by level: look-ups to Haiku, building to a check to Sonnet, building with judgement to Opus, deciding and reviewing to Fable. The lead session fans independent tasks out to workers, each in its own git worktree (at most `MAX_PARALLEL`), and integrates their branches one at a time through the gate. `scripts/lock.sh` gives every worktree one shared lock for things they would collide on, such as a test database; the gate itself takes it. The report lists any worktree left in flight.
 
 ## Safety, plainly
 

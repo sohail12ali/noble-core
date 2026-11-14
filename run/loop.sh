@@ -92,6 +92,8 @@ done
   echo; echo "## Questions waiting for you"; echo
   grep -E '^## .*\(open\)' run/INBOX.md 2>/dev/null | sed 's/^## /- /' || true
   grep -qE '^## .*\(open\)' run/INBOX.md 2>/dev/null || echo "None."
+  left=$(git worktree list | tail -n +2); stray=$(git for-each-ref --format='%(refname:short)' refs/heads/work/ refs/heads/worktree- 2>/dev/null)
+  if [ -n "$left$stray" ]; then echo; echo "## Left in flight (worktrees and work branches not cleaned up)"; echo; echo '```'; echo "$left"; echo "$stray"; echo '```'; fi
   echo; echo "## Commits"; echo; git log --oneline "$START_SHA"..HEAD | sed 's/^/- /' | head -60
   if [ "$verify" = RED ]; then echo; echo "## Gate output (last 30 lines)"; echo; echo '```'; tail -30 "$LOGS/last-verify.txt"; echo '```'; fi
   echo; echo "Details: \`run/STATE.md\`, \`run/JOURNAL.md\`, \`run/INBOX.md\`, \`docs/DECISIONS.md\`, session logs in \`run/logs/\`."

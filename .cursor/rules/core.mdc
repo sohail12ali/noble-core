@@ -1,5 +1,0 @@
----
-description: Core agent rules
-alwaysApply: true
----
-Follow `AGENTS.md` at the repo root. Start by reading `PLAN.md`, then `run/STATE.md`.

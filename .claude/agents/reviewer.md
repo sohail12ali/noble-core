@@ -1,6 +1,7 @@
 ---
 name: reviewer
-description: Fresh-context, read-only review of a diff before it is called done. Use for anything touching the plan's "Never break" list (money, privacy, data separation, access, safety), for security-relevant changes, and when a result looks too easy.
+description: Level 4. Fresh-context, read-only review of a diff before it is called done. Use for anything touching the plan's "Never break" list (money, privacy, data separation, access, safety), for security-relevant changes, and when a result looks too easy.
+model: fable
 tools: Read, Grep, Glob, Bash
 ---
 

@@ -4,7 +4,7 @@ Next: read PLAN.md, check that the gate in core.env runs, then start on the firs
 
 ## Tasks
 
-Agent-maintained. One line each: `- [ ]` todo, `- [~]` in progress, `- [x]` done with its proof (command, commit), `- [!]` parked with the inbox question number.
+Agent-maintained. One line each: `- [ ]` todo, `- [~]` in progress (with its branch and worktree if a worker has it), `- [x]` done with its proof (command, commit), `- [!]` parked with the inbox question number.
 
 ## Facts a cold start needs
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-# PreToolUse hook for Bash: the hard limits in AGENTS.md, enforced instead of hoped for.
+# PreToolUse hook for Bash: the hard limits in CLAUDE.md, enforced instead of hoped for.
 # Always: no commit/push on a protected branch, no push to one, no force-push, no --no-verify.
 # In an unattended run (CORE_UNATTENDED=1, set by run/loop.sh): also no merging, no deploy-style gh actions.
 input=$(cat)
