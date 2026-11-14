@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": ["Bash", "Read", "Edit", "Write", "Glob", "Grep", "Agent", "WebFetch", "WebSearch"],
+    "deny": [
+      "Edit(PLAN.md)",
+      "Write(PLAN.md)",
+      "Edit(core.env)",
+      "Write(core.env)",
+      "Edit(run/unattended.settings.json)",
+      "Edit(scripts/guard.sh)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/secrets/**)",
+      "Bash(sudo:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(gh pr merge:*)"
+    ]
+  }
+}

@@ -1,12 +1,5 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(git status:*)",
-      "Bash(git diff:*)",
-      "Bash(git log:*)",
-      "Bash(git worktree list:*)",
-      "Bash(sh scripts/core/doctor.sh:*)"
-    ],
     "deny": [
       "Read(.env)",
       "Read(.env.*)",
@@ -18,7 +11,7 @@
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "sh \"$CLAUDE_PROJECT_DIR/scripts/hooks/block-protected-branch-commit.sh\"" }
+          { "type": "command", "command": "sh \"$CLAUDE_PROJECT_DIR/scripts/guard.sh\"" }
         ]
       }
     ]
